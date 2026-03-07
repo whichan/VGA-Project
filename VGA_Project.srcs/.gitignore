@@ -1,0 +1,11 @@
+# Vivado temporary files
+*.log
+*.jou
+*.pb
+*.str
+.Xil/
+
+# Compilation/Simulation outputs
+xsim.dir/
+*.vdi
+*.bit
