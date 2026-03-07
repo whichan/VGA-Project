@@ -1,11 +1,16 @@
-# Vivado temporary files
+# Vivado Generated Folders (Must be ignored)
+VGA_Project.cache/
+VGA_Project.gen/
+VGA_Project.hw/
+VGA_Project.ip_user_files/
+VGA_Project.runs/
+VGA_Project.sim/
+xsim.dir/
+
+# Log & Journal files
 *.log
 *.jou
 *.pb
 *.str
-.Xil/
-
-# Compilation/Simulation outputs
-xsim.dir/
 *.vdi
 *.bit
