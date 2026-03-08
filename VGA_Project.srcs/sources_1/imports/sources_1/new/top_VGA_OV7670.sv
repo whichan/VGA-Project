@@ -219,7 +219,7 @@ module top_VGA_OV7670 (
   );
 
   spi_send_fsm U_SPI_SEND_FSM (
-      .clk         (clk),          // 100MHz (spi_master와 같은 클럭)
+      .clk         (clk_100M),     // 100MHz (spi_master와 같은 클럭)
       .reset       (reset),
       .box_x_min   (box_x_min),
       .box_x_max   (box_x_max),
@@ -234,7 +234,7 @@ module top_VGA_OV7670 (
   );
 
   spi_master U_SPI_MASTER (
-      .clk     (clk),
+      .clk     (clk_100M),
       .reset   (reset),
       .start   (spi_start),
       .tx_data (spi_tx_data),
