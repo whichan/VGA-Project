@@ -14,3 +14,15 @@ xsim.dir/
 *.str
 *.vdi
 *.bit
+
+# Vivado의 유령 폴더 (가장 흔하게 누락됨)
+.Xil/
+
+# 프로젝트 백업 및 임시 파일
+*.backup
+*.os
+*.obj
+
+# 시뮬레이션 관련 잔여물
+*.vcd
+*.wdb
