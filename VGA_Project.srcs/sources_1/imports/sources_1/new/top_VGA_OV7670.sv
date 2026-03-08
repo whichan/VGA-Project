@@ -17,7 +17,12 @@ module top_VGA_OV7670 (
     output logic [3:0] port_blue,
     //ov7670
     output logic       sioc,
-    inout  wire        siod
+    inout  wire        siod,
+    //spi interface
+    output logic       sclk,
+    output logic       mosi,
+    input  logic       miso,
+    output logic       cs
 );
 
   logic                       clk_100M;
@@ -43,6 +48,12 @@ module top_VGA_OV7670 (
   logic [8:0] edge_px;
   logic [7:0] edge_py;
   logic sccb_start, sccb_busy, sccb_done, ov_reset, ov_pwdn, init_done;
+
+  logic        spi_start;
+  logic [15:0] spi_tx_data;
+  logic [15:0] spi_rx_data;
+  logic        spi_done;
+  logic        spi_tx_ready;
 
 
   assign px = wAddr % 320;
@@ -207,5 +218,32 @@ module top_VGA_OV7670 (
       .edge_py  (edge_py)
   );
 
+  spi_send_fsm U_SPI_SEND_FSM (
+      .clk         (clk),          // 100MHz (spi_master와 같은 클럭)
+      .reset       (reset),
+      .box_x_min   (box_x_min),
+      .box_x_max   (box_x_max),
+      .box_y_min   (box_y_min),
+      .box_y_max   (box_y_max),
+      .box_valid   (box_valid),
+      .vsync       (vsync),
+      .spi_start   (spi_start),
+      .spi_tx_data (spi_tx_data),
+      .spi_done    (spi_done),
+      .spi_tx_ready(spi_tx_ready)
+  );
 
+  spi_master U_SPI_MASTER (
+      .clk     (clk),
+      .reset   (reset),
+      .start   (spi_start),
+      .tx_data (spi_tx_data),
+      .tx_ready(spi_tx_ready),
+      .rx_data (spi_rx_data),
+      .done    (spi_done),
+      .sclk    (sclk),
+      .mosi    (mosi),
+      .miso    (miso),
+      .cs      (cs)
+  );
 endmodule

@@ -21,7 +21,7 @@ module spi_send_fsm (
     // spi_master 인터페이스
     output logic        spi_start,
     output logic [15:0] spi_tx_data,
-    input  logic        spi_done,
+    input  logic        spi_done,     //spi_master에서 끝났단 신호를 받음
     input  logic        spi_tx_ready
 );
 
