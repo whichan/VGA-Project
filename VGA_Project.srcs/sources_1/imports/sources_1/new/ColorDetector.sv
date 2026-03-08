@@ -12,7 +12,7 @@ module ColorDetector #(
     parameter B_MIN = 4'd0,
     parameter B_MAX = 4'd5,
     // 노이즈 필터: 최소 픽셀 수
-    parameter PIX_THRESHOLD = 200
+    parameter PIX_THRESHOLD = 100
 ) (
     input  logic                       pclk,
     input  logic                       reset,
