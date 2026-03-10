@@ -88,6 +88,7 @@ module top_VGA_OV7670 (
       .IMG_W(320),
       .IMG_H(240)
   ) u_ImgMemReader (
+      .clk       (clk_100M),
       .DE        (DE),
       .x_pixel   (x_pixel),
       .y_pixel   (y_pixel),
