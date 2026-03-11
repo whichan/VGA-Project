@@ -1,15 +1,15 @@
 `timescale 1ns / 1ps
 
 module ColorDetector #(
-    parameter IMG_W = 320,
-    parameter IMG_H = 240,
+    parameter IMG_W             = 320,
+    parameter IMG_H             = 240,
     // RGB565 타겟 색상 임계값 (비행기 색에 맞게 조정)
-    parameter R_MIN = 4'd10,  // Red 4bit (imgData[15:12])
-    parameter R_MAX = 4'd15,
-    parameter G_MIN = 4'd0,
-    parameter G_MAX = 4'd5,
-    parameter B_MIN = 4'd0,
-    parameter B_MAX = 4'd5,
+    parameter R_MIN             = 4'd10,  // Red 4bit (imgData[15:12])
+    parameter R_MAX             = 4'd15,
+    parameter G_MIN             = 4'd0,
+    parameter G_MAX             = 4'd5,
+    parameter B_MIN             = 4'd0,
+    parameter B_MAX             = 4'd5,
     // 노이즈 필터: 최소 픽셀 수
     parameter PIX_THRESHOLD_MIN = 20,
     parameter PIX_THRESHOLD_MAX = 200

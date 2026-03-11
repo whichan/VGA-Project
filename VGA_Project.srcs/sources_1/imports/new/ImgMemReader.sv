@@ -174,8 +174,8 @@ module ImgMemReader #(
 ) (
     input  logic                        clk,
     input  logic                        DE,
-    input  logic [                 9:0] x_pixel,      // VGA 0~639
-    input  logic [                 9:0] y_pixel,      // VGA 0~479
+    input  logic [                 9:0] x_pixel,       // VGA 0~639
+    input  logic [                 9:0] y_pixel,       // VGA 0~479
     input  logic [                15:0] imgData,
     output logic [$clog2(IMG_SIZE)-1:0] addr,
     output logic [                 3:0] port_red,
@@ -198,7 +198,10 @@ module ImgMemReader #(
     input  logic [                 8:0] box_b_x_max,
     input  logic [                 7:0] box_b_y_min,
     input  logic [                 7:0] box_b_y_max,
-    input  logic                        box_b_valid
+    input  logic                        box_b_valid,
+    //중심점
+    output logic [                 9:0] out_center_x,  // Red 박스 중심 X (QVGA 0~319)
+    output logic [                 9:0] out_center_y   // Red 박스 중심 Y (QVGA 0~239)
 );
 
   // =========================================================================
@@ -252,6 +255,10 @@ module ImgMemReader #(
 
   wire [8:0] cx_b = ({1'b0, box_b_x_min} + {1'b0, box_b_x_max}) >> 1;
   wire [7:0] cy_b = ({1'b0, box_b_y_min} + {1'b0, box_b_y_max}) >> 1;
+
+
+  assign out_center_x = cx_r;
+  assign out_center_y = cy_r;
 
   // --- 크로스헤어 (QVGA 좌표 기준, ±5픽셀) ---
   localparam CROSS_HALF = 5;
