@@ -1,4 +1,3 @@
-// ColorDetector.sv
 `timescale 1ns / 1ps
 
 module ColorDetector #(
@@ -12,7 +11,8 @@ module ColorDetector #(
     parameter B_MIN = 4'd0,
     parameter B_MAX = 4'd5,
     // 노이즈 필터: 최소 픽셀 수
-    parameter PIX_THRESHOLD = 100
+    parameter PIX_THRESHOLD_MIN = 20,
+    parameter PIX_THRESHOLD_MAX = 200
 ) (
     input  logic                       pclk,
     input  logic                       reset,
@@ -32,13 +32,23 @@ module ColorDetector #(
     input  logic [                7:0] edge_py
 );
 
+
   // wAddr → (px, py) 변환
   logic [8:0] px;
   logic [7:0] py;
   logic [3:0] r, g, b;
   logic is_target;
+  logic is_target_d;
   assign px = wAddr % IMG_W;
   assign py = wAddr / IMG_W;
+
+  // 프레임 내 누적 레지스터
+  logic [8:0] cur_x_min, cur_x_max;
+  logic [7:0] cur_y_min, cur_y_max;
+  logic [16:0] pix_count;  // 최대 320*240=76800 → 17bit
+  logic vsync_prev;
+  logic is_candidate;
+
 
   // 색상 추출 (RGB565에서 4bit씩)
   assign r = wData[15:12];
@@ -51,35 +61,28 @@ module ColorDetector #(
                        (g >= G_MIN) && (g <= G_MAX) &&
                        (b >= B_MIN) && (b <= B_MAX);
 
-  // 프레임 내 누적 레지스터
-  logic [8:0] cur_x_min, cur_x_max;
-  logic [7:0] cur_y_min, cur_y_max;
-  logic [16:0] pix_count;  // 최대 320*240=76800 → 17bit
-
-  logic vsync_prev;
-
-  logic is_candidate;
-  assign is_candidate = is_target && is_edge;
+  assign is_candidate = is_target_d && is_edge;
 
   always_ff @(posedge pclk or posedge reset) begin
     if (reset) begin
-      cur_x_min  <= 9'd319;
-      cur_x_max  <= 9'd0;
-      cur_y_min  <= 8'd239;
-      cur_y_max  <= 8'd0;
-      pix_count  <= 0;
-      box_x_min  <= 0;
-      box_x_max  <= 0;
-      box_y_min  <= 0;
-      box_y_max  <= 0;
-      box_valid  <= 0;
-      vsync_prev <= 0;
+      cur_x_min   <= 9'd319;
+      cur_x_max   <= 9'd0;
+      cur_y_min   <= 8'd239;
+      cur_y_max   <= 8'd0;
+      pix_count   <= 0;
+      box_x_min   <= 0;
+      box_x_max   <= 0;
+      box_y_min   <= 0;
+      box_y_max   <= 0;
+      box_valid   <= 0;
+      vsync_prev  <= 0;
+      is_target_d <= 0;
     end else begin
-      vsync_prev <= vsync;
-
+      vsync_prev  <= vsync;
+      is_target_d <= is_target;
       // vsync 상승 엣지 = 프레임 끝 → 결과 래치 후 초기화
       if (vsync && !vsync_prev) begin
-        if (pix_count > PIX_THRESHOLD) begin
+        if ((pix_count > PIX_THRESHOLD_MIN) && (pix_count < PIX_THRESHOLD_MAX)) begin
           box_x_min <= cur_x_min;
           box_x_max <= cur_x_max;
           box_y_min <= cur_y_min;
@@ -97,12 +100,12 @@ module ColorDetector #(
       end
 
       // 픽셀 처리
-      if (is_target) begin
+      if (is_target_d) begin
         pix_count <= pix_count + 1;
-        if (px < cur_x_min) cur_x_min <= px;
-        if (px > cur_x_max) cur_x_max <= px;
-        if (py < cur_y_min) cur_y_min <= py;
-        if (py > cur_y_max) cur_y_max <= py;
+        if (edge_px < cur_x_min) cur_x_min <= edge_px;
+        if (edge_px > cur_x_max) cur_x_max <= edge_px;
+        if (edge_py < cur_y_min) cur_y_min <= edge_py;
+        if (edge_py > cur_y_max) cur_y_max <= edge_py;
       end
     end
   end

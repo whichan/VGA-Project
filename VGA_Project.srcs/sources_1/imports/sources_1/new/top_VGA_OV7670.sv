@@ -55,6 +55,21 @@ module top_VGA_OV7670 (
   logic        spi_done;
   logic        spi_tx_ready;
 
+  logic [ 8:0] box_r_x_min;
+  logic [ 8:0] box_r_x_max;
+  logic [ 7:0] box_r_y_min;
+  logic [ 7:0] box_r_y_max;
+  logic        box_r_valid;
+  logic [ 8:0] box_g_x_min;
+  logic [ 8:0] box_g_x_max;
+  logic [ 7:0] box_g_y_min;
+  logic [ 7:0] box_g_y_max;
+  logic        box_g_valid;
+  logic [ 8:0] box_b_x_min;
+  logic [ 8:0] box_b_x_max;
+  logic [ 7:0] box_b_y_min;
+  logic [ 7:0] box_b_y_max;
+  logic        box_b_valid;
 
   assign px = wAddr % 320;
   assign py = wAddr / 320;
@@ -87,33 +102,32 @@ module top_VGA_OV7670 (
       .IMG_SIZE(360 * 240),
       .IMG_W(320),
       .IMG_H(240)
-  ) u_ImgMemReader (
-      .clk       (clk_100M),
-      .DE        (DE),
-      .x_pixel   (x_pixel),
-      .y_pixel   (y_pixel),
-      .imgData   (rData),
-      .addr      (rAddr),
-      .port_red  (port_red),
-      .port_green(port_green),
-      .port_blue (port_blue),
-      .box_x_min (box_x_min),
-      .box_x_max (box_x_max),
-      .box_y_min (box_y_min),
-      .box_y_max (box_y_max),
-      .box_valid (box_valid)
+      // .NUM_BOXES(NUM_BOXES)
+  ) U_ImgMemReader (
+      .DE         (DE),
+      .x_pixel    (x_pixel),
+      .y_pixel    (y_pixel),
+      .imgData    (rData),
+      .addr       (rAddr),
+      .port_red   (port_red),
+      .port_green (port_green),
+      .port_blue  (port_blue),
+      .box_r_x_min(box_r_x_min),
+      .box_r_x_max(box_r_x_max),
+      .box_r_y_min(box_r_y_min),
+      .box_r_y_max(box_r_y_max),
+      .box_r_valid(box_r_valid),
+      .box_g_x_min(box_g_x_min),
+      .box_g_x_max(box_g_x_max),
+      .box_g_y_min(box_g_y_min),
+      .box_g_y_max(box_g_y_max),
+      .box_g_valid(box_g_valid),
+      .box_b_x_min(box_b_x_min),
+      .box_b_x_max(box_b_x_max),
+      .box_b_y_min(box_b_y_min),
+      .box_b_y_max(box_b_y_max),
+      .box_b_valid(box_b_valid)
   );
-
-  //   ImgMemReader U_FrameBufferReader (
-  //       .DE        (DE),
-  //       .x_pixel   (x_pixel),
-  //       .y_pixel   (y_pixel),
-  //       .addr      (rAddr),
-  //       .imgData   (rData),
-  //       .port_red  (port_red),
-  //       .port_green(port_green),
-  //       .port_blue (port_blue)
-  //   );
 
   //   ImgMemReader_upscaler U_FrameBufferReader_Upscale (
   //       .DE(DE),
@@ -174,59 +188,118 @@ module top_VGA_OV7670 (
       .init_done    (init_done)
   );
 
+  VGA_EdgeDetector #(
+      .IMG_W      (320),
+      .IMG_H      (240),
+      .EDGE_THRESH(13'd800)  //민감도 조정
+  ) u_VGA_EdgeDetector (
+      .pclk   (pclk),
+      .reset  (reset),
+      .we     (we),
+      .wAddr  (wAddr),
+      .wData  (wData),
+      .px     (px),
+      .py     (py),
+      .is_edge(is_edge),
+      .edge_px(edge_px),
+      .edge_py(edge_py)
+  );
 
-  //   VGA_EdgeDetector #(
-  //       .IMG_W      (320),
-  //       .IMG_H      (240),
-  //       .EDGE_THRESH(8'd10)  // ← 민감도 조정
-  //   ) u_VGA_EdgeDetector (
-  //       .pclk   (pclk),
-  //       .reset  (reset),
-  //       .we     (we),
-  //       .wAddr  (wAddr),
-  //       .wData  (wData),
-  //       .px     (px),
-  //       .py     (py),
-  //       .is_edge(is_edge),
-  //       .edge_px(edge_px),
-  //       .edge_py(edge_py)
-  //   );
-
+  // RED -------------------------------------------------
   ColorDetector #(
-      .IMG_W(320),
-      .IMG_H(240),
-      .R_MIN(4'd10),
-      .R_MAX(4'd15),  // ← 비행기 색에 맞게 조정
-      .G_MIN(4'd0),
-      .G_MAX(4'd5),
-      .B_MIN(4'd0),
-      .B_MAX(4'd5),
-      .PIX_THRESHOLD(200)
-  ) U_ColorDetector (
+      .IMG_W            (320),
+      .IMG_H            (240),
+      .R_MIN            (4'd10),
+      .R_MAX            (4'd15),  // ← 비행기 색에 맞게 조정
+      .G_MIN            (4'd0),
+      .G_MAX            (4'd5),
+      .B_MIN            (4'd0),
+      .B_MAX            (4'd5),
+      .PIX_THRESHOLD_MIN(20),
+      .PIX_THRESHOLD_MAX(200)
+  ) u_ColorDetector_RED (
       .pclk     (pclk),
       .reset    (reset),
       .we       (we),
       .wAddr    (wAddr),
       .wData    (wData),
       .vsync    (vsync),
-      .box_x_min(box_x_min),
-      .box_x_max(box_x_max),
-      .box_y_min(box_y_min),
-      .box_y_max(box_y_max),
-      .box_valid(box_valid),
+      .box_x_min(box_r_x_min),
+      .box_x_max(box_r_x_max),
+      .box_y_min(box_r_y_min),
+      .box_y_max(box_r_y_max),
+      .box_valid(box_r_valid),
       .is_edge  (is_edge),
       .edge_px  (edge_px),
       .edge_py  (edge_py)
   );
 
+  // GREEN -------------------------------------------------
+  ColorDetector #(
+      .IMG_W            (320),
+      .IMG_H            (240),
+      .R_MIN            (4'd0),
+      .R_MAX            (4'd5),
+      .G_MIN            (4'd10),
+      .G_MAX            (4'd15),
+      .B_MIN            (4'd0),
+      .B_MAX            (4'd5),
+      .PIX_THRESHOLD_MIN(20),
+      .PIX_THRESHOLD_MAX(200)
+  ) u_ColorDetector_GREEN (
+      .pclk     (pclk),
+      .reset    (reset),
+      .we       (we),
+      .wAddr    (wAddr),
+      .wData    (wData),
+      .vsync    (vsync),
+      .box_x_min(box_g_x_min),
+      .box_x_max(box_g_x_max),
+      .box_y_min(box_g_y_min),
+      .box_y_max(box_g_y_max),
+      .box_valid(box_g_valid),
+      .is_edge  (is_edge),
+      .edge_px  (edge_px),
+      .edge_py  (edge_py)
+  );
+
+  // BLUE -------------------------------------------------
+  //   ColorDetector #(
+  //       .IMG_W            (320),
+  //       .IMG_H            (240),
+  //       .R_MIN            (4'd0),
+  //       .R_MAX            (4'd5),
+  //       .G_MIN            (4'd0),
+  //       .G_MAX            (4'd5),
+  //       .B_MIN            (4'd10),
+  //       .B_MAX            (4'd15),
+  //       .PIX_THRESHOLD_MIN(20),
+  //       .PIX_THRESHOLD_MAX(200)
+  //   ) u_ColorDetector_BLUE (
+  //       .pclk     (pclk),
+  //       .reset    (reset),
+  //       .we       (we),
+  //       .wAddr    (wAddr),
+  //       .wData    (wData),
+  //       .vsync    (vsync),
+  //       .box_x_min(box_b_x_min),
+  //       .box_x_max(box_b_x_max),
+  //       .box_y_min(box_b_y_min),
+  //       .box_y_max(box_b_y_max),
+  //       .box_valid(box_b_valid),
+  //       .is_edge  (is_edge),
+  //       .edge_px  (edge_px),
+  //       .edge_py  (edge_py)
+  //   );
+
   spi_send_fsm U_SPI_SEND_FSM (
       .clk         (clk_100M),     // 100MHz (spi_master와 같은 클럭)
       .reset       (reset),
-      .box_x_min   (box_x_min),
-      .box_x_max   (box_x_max),
-      .box_y_min   (box_y_min),
-      .box_y_max   (box_y_max),
-      .box_valid   (box_valid),
+      .box_x_min   (box_r_x_min),
+      .box_x_max   (box_r_x_max),
+      .box_y_min   (box_r_y_min),
+      .box_y_max   (box_r_y_max),
+      .box_valid   (box_r_valid),
       .vsync       (vsync),
       .spi_start   (spi_start),
       .spi_tx_data (spi_tx_data),
