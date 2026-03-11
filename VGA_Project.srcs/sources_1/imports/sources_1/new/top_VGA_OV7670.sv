@@ -22,7 +22,9 @@ module top_VGA_OV7670 (
     output logic       sclk,
     output logic       mosi,
     input  logic       miso,
-    output logic       cs
+    output logic       cs,
+    //sw
+    input  logic       mode_sw
 );
 
   logic                       clk_100M;
@@ -71,9 +73,20 @@ module top_VGA_OV7670 (
   logic [ 7:0] box_b_y_max;
   logic        box_b_valid;
 
+  logic [9:0] obj_x, obj_y;
+  logic [$clog2(320*240)-1:0] addr_up;
+  logic [15:0] data_up;
+
   assign px = wAddr % 320;
   assign py = wAddr / 320;
 
+  logic [3:0] red_img;
+  logic [3:0] green_img;
+  logic [3:0] blue_img;
+
+  logic [3:0] red_detect;
+  logic [3:0] green_detect;
+  logic [3:0] blue_detect;
 
   clk_wiz_0 U_CLK_WIZ (
       // Clock out ports
@@ -97,37 +110,39 @@ module top_VGA_OV7670 (
       .DE     (DE)
   );
 
-
   ImgMemReader #(
       .IMG_SIZE(360 * 240),
       .IMG_W(320),
       .IMG_H(240)
       // .NUM_BOXES(NUM_BOXES)
   ) U_ImgMemReader (
-      .DE         (DE),
-      .x_pixel    (x_pixel),
-      .y_pixel    (y_pixel),
-      .imgData    (rData),
-      .addr       (rAddr),
-      .port_red   (port_red),
-      .port_green (port_green),
-      .port_blue  (port_blue),
-      .box_r_x_min(box_r_x_min),
-      .box_r_x_max(box_r_x_max),
-      .box_r_y_min(box_r_y_min),
-      .box_r_y_max(box_r_y_max),
-      .box_r_valid(box_r_valid),
-      .box_g_x_min(box_g_x_min),
-      .box_g_x_max(box_g_x_max),
-      .box_g_y_min(box_g_y_min),
-      .box_g_y_max(box_g_y_max),
-      .box_g_valid(box_g_valid),
-      .box_b_x_min(box_b_x_min),
-      .box_b_x_max(box_b_x_max),
-      .box_b_y_min(box_b_y_min),
-      .box_b_y_max(box_b_y_max),
-      .box_b_valid(box_b_valid)
+      .DE          (DE),
+      .x_pixel     (x_pixel),
+      .y_pixel     (y_pixel),
+      .imgData     (rData),
+      .addr        (rAddr),
+      .port_red    (red_detect),
+      .port_green  (green_detect),
+      .port_blue   (blue_detect),
+      .box_r_x_min (box_r_x_min),
+      .box_r_x_max (box_r_x_max),
+      .box_r_y_min (box_r_y_min),
+      .box_r_y_max (box_r_y_max),
+      .box_r_valid (box_r_valid),
+      .box_g_x_min (box_g_x_min),
+      .box_g_x_max (box_g_x_max),
+      .box_g_y_min (box_g_y_min),
+      .box_g_y_max (box_g_y_max),
+      .box_g_valid (box_g_valid),
+      .box_b_x_min (box_b_x_min),
+      .box_b_x_max (box_b_x_max),
+      .box_b_y_min (box_b_y_min),
+      .box_b_y_max (box_b_y_max),
+      .box_b_valid (box_b_valid),
+      .out_center_x(obj_x),
+      .out_center_y(obj_y)
   );
+
 
   //   ImgMemReader_upscaler U_FrameBufferReader_Upscale (
   //       .DE(DE),
@@ -292,6 +307,31 @@ module top_VGA_OV7670 (
   //       .edge_py  (edge_py)
   //   );
 
+  vga_overlay U_VGA_OVERLAY (
+      .clk      (clk_100M),
+      .reset    (reset),
+      .addr     (addr_up),
+      .out_valid(box_r_valid),
+      .x_pixel  (x_pixel),
+      .y_pixel  (y_pixel),
+      .obj_x    (obj_x),
+      .obj_y    (obj_y),
+      .data     (data_up)
+  );
+
+  ImgMEMReader_overlay U_IMGMEMREADER_OVERLAY (
+      .DE(DE),
+      .x_pixel(x_pixel),
+      .y_pixel(y_pixel),
+      .addr(addr_up),
+      .imgData(data_up),
+      .port_red(red_img),
+      .port_green(green_img),
+      .port_blue(blue_img)
+  );
+
+
+
   spi_send_fsm U_SPI_SEND_FSM (
       .clk         (clk_100M),     // 100MHz (spi_master와 같은 클럭)
       .reset       (reset),
@@ -320,4 +360,36 @@ module top_VGA_OV7670 (
       .miso    (miso),
       .cs      (cs)
   );
+
+  mux_rgb U_MUX_RGB (
+      .sw        (mode_sw),
+      .red1      (red_detect),
+      .red2      (red_img),
+      .green1    (green_detect),
+      .green2    (green_img),
+      .blue1     (blue_detect),
+      .blue2     (blue_img),
+      .port_red  (port_red),
+      .port_green(port_green),
+      .port_blue (port_blue)
+  );
+endmodule
+
+
+module mux_rgb (
+    input  logic       sw,
+    input  logic [3:0] red1,
+    input  logic [3:0] red2,
+    input  logic [3:0] green1,
+    input  logic [3:0] green2,
+    input  logic [3:0] blue1,
+    input  logic [3:0] blue2,
+    output logic [3:0] port_red,
+    output logic [3:0] port_green,
+    output logic [3:0] port_blue
+);
+  assign port_red   = sw ? red1 : red2;
+  assign port_green = sw ? green1 : green2;
+  assign port_blue  = sw ? blue1 : blue2;
+
 endmodule
