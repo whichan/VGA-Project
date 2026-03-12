@@ -24,7 +24,14 @@ module top_VGA_OV7670 (
     input  logic       miso,
     output logic       cs,
     //sw
-    input  logic       mode_sw
+    input  logic       mode_img,
+    input  logic       sw_mode,
+    //btn
+    input  logic       btn_left,
+    input  logic       btn_right,
+    input  logic       btn_up,
+    input  logic       btn_down,
+    input  logic       btn_center
 );
 
   logic                       clk_100M;
@@ -314,6 +321,23 @@ module top_VGA_OV7670 (
   //       .edge_py  (edge_py)
   //   );
 
+  manual_control U_MANUAL_CONTROL (
+      .clk       (clk_100M),
+      .reset     (reset),
+      .sw_mode   (sw_mode),
+      .btn_left  (btn_left),
+      .btn_right (btn_right),
+      .btn_up    (btn_up),
+      .btn_down  (btn_down),
+      .btn_center(btn_center),
+      .mode      (ctrl_mode),
+      .left      (ctrl_left),
+      .right     (ctrl_right),
+      .up        (ctrl_up),
+      .down      (ctrl_down),
+      .fire      (ctrl_fire)
+  );
+
   vga_overlay U_VGA_OVERLAY (
       .clk      (clk_100M),
       .reset    (reset),
@@ -364,11 +388,18 @@ module top_VGA_OV7670 (
       .box_y_max   (box_r_y_max),
       .box_valid   (box_r_valid),
       .vsync       (vsync),
+      .mode        (ctrl_mode),
+      .btn_left    (ctrl_left),
+      .btn_right   (ctrl_right),
+      .btn_up      (ctrl_up),
+      .btn_down    (ctrl_down),
+      .fire        (ctrl_fire),
       .spi_start   (spi_start),
       .spi_tx_data (spi_tx_data),
       .spi_done    (spi_done),
       .spi_tx_ready(spi_tx_ready)
   );
+
 
   spi_master U_SPI_MASTER (
       .clk     (clk_100M),
@@ -385,7 +416,7 @@ module top_VGA_OV7670 (
   );
 
   mux_rgb U_MUX_RGB (
-      .sw        (mode_sw),
+      .sw        (mode_img),
       .red1      (red_detect),
       .red2      (red_img),
       .green1    (green_detect),
