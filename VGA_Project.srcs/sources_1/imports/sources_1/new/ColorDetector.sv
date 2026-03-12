@@ -100,7 +100,7 @@ module ColorDetector #(
       end
 
       // 픽셀 처리
-      if (is_target_d) begin
+      if (is_candidate) begin
         pix_count <= pix_count + 1;
         if (edge_px < cur_x_min) cur_x_min <= edge_px;
         if (edge_px > cur_x_max) cur_x_max <= edge_px;
