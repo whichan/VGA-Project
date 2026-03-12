@@ -306,42 +306,42 @@ module ImgMemReader #(
   logic text_on_g, bg_on_g;
   logic [3:0] tG_r, tG_g, tG_b;
 
-  text_overlay #(
-      .X_START(10'd4),
-      .Y_START(10'd44)
-  ) u_text_g (
-      .x_pixel    (qvga_x),
-      .y_pixel    ({2'b00, qvga_y}),
-      .DE         (DE),
-      .center_x   (cx_g),
-      .center_y   (cy_g),
-      .coord_valid(box_g_valid),
-      .text_on    (text_on_g),
-      .text_r     (tG_r),
-      .text_g     (tG_g),
-      .text_b     (tG_b),
-      .bg_on      (bg_on_g)
-  );
+  //   text_overlay #(
+  //       .X_START(10'd4),
+  //       .Y_START(10'd44)
+  //   ) u_text_g (
+  //       .x_pixel    (qvga_x),
+  //       .y_pixel    ({2'b00, qvga_y}),
+  //       .DE         (DE),
+  //       .center_x   (cx_g),
+  //       .center_y   (cy_g),
+  //       .coord_valid(box_g_valid),
+  //       .text_on    (text_on_g),
+  //       .text_r     (tG_r),
+  //       .text_g     (tG_g),
+  //       .text_b     (tG_b),
+  //       .bg_on      (bg_on_g)
+  //   );
 
   logic text_on_b, bg_on_b;
   logic [3:0] tB_r, tB_g, tB_b;
 
-  text_overlay #(
-      .X_START(10'd4),
-      .Y_START(10'd84)
-  ) u_text_b (
-      .x_pixel    (qvga_x),
-      .y_pixel    ({2'b00, qvga_y}),
-      .DE         (DE),
-      .center_x   (cx_b),
-      .center_y   (cy_b),
-      .coord_valid(box_b_valid),
-      .text_on    (text_on_b),
-      .text_r     (tB_r),
-      .text_g     (tB_g),
-      .text_b     (tB_b),
-      .bg_on      (bg_on_b)
-  );
+  //   text_overlay #(
+  //       .X_START(10'd4),
+  //       .Y_START(10'd84)
+  //   ) u_text_b (
+  //       .x_pixel    (qvga_x),
+  //       .y_pixel    ({2'b00, qvga_y}),
+  //       .DE         (DE),
+  //       .center_x   (cx_b),
+  //       .center_y   (cy_b),
+  //       .coord_valid(box_b_valid),
+  //       .text_on    (text_on_b),
+  //       .text_r     (tB_r),
+  //       .text_g     (tB_g),
+  //       .text_b     (tB_b),
+  //       .bg_on      (bg_on_b)
+  //   );
 
   // =========================================================================
   // 최종 출력

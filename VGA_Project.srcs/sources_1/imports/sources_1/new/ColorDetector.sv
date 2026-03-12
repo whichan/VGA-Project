@@ -46,8 +46,8 @@ module ColorDetector #(
   logic [8:0] cur_x_min, cur_x_max;
   logic [7:0] cur_y_min, cur_y_max;
   logic [16:0] pix_count;  // 최대 320*240=76800 → 17bit
-  logic vsync_prev;
-  logic is_candidate;
+  logic        vsync_prev;
+  logic        is_candidate;
 
 
   // 색상 추출 (RGB565에서 4bit씩)
@@ -100,7 +100,7 @@ module ColorDetector #(
       end
 
       // 픽셀 처리
-      if (is_candidate) begin
+      if (is_target_d) begin
         pix_count <= pix_count + 1;
         if (edge_px < cur_x_min) cur_x_min <= edge_px;
         if (edge_px > cur_x_max) cur_x_max <= edge_px;

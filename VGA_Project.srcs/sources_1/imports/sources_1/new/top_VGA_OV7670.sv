@@ -88,6 +88,13 @@ module top_VGA_OV7670 (
   logic [3:0] green_detect;
   logic [3:0] blue_detect;
 
+  logic [8:0] smooth_x;
+  logic [7:0] smooth_y;
+
+  logic [8:0] stab_r_x_min, stab_r_x_max;
+  logic [7:0] stab_r_y_min, stab_r_y_max;
+  logic stab_r_valid;
+
   clk_wiz_0 U_CLK_WIZ (
       // Clock out ports
       .clk_out1(clk_100M),  // output clk_out1 100MHz
@@ -320,17 +327,33 @@ module top_VGA_OV7670 (
   );
 
   ImgMEMReader_overlay U_IMGMEMREADER_OVERLAY (
-      .DE(DE),
-      .x_pixel(x_pixel),
-      .y_pixel(y_pixel),
-      .addr(addr_up),
-      .imgData(data_up),
-      .port_red(red_img),
+      .DE        (DE),
+      .x_pixel   (x_pixel),
+      .y_pixel   (y_pixel),
+      .addr      (addr_up),
+      .imgData   (data_up),
+      .port_red  (red_img),
       .port_green(green_img),
-      .port_blue(blue_img)
+      .port_blue (blue_img)
   );
 
-
+  // 모듈 추가 (ColorDetector 인스턴스 바로 아래)
+  //   bbox_stabilizer #(
+  //       .STABLE_THRESH(15)
+  //   ) U_BBOX_STAB (
+  //       .clk       (clk_100M),
+  //       .reset     (reset),
+  //       .raw_x_min (box_r_x_min),
+  //       .raw_x_max (box_r_x_max),
+  //       .raw_y_min (box_r_y_min),
+  //       .raw_y_max (box_r_y_max),
+  //       .raw_valid (box_r_valid),
+  //       .stab_x_min(stab_r_x_min),
+  //       .stab_x_max(stab_r_x_max),
+  //       .stab_y_min(stab_r_y_min),
+  //       .stab_y_max(stab_r_y_max),
+  //       .stab_valid(stab_r_valid)
+  //   );
 
   spi_send_fsm U_SPI_SEND_FSM (
       .clk         (clk_100M),     // 100MHz (spi_master와 같은 클럭)
