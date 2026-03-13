@@ -83,10 +83,19 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/imports/sources_1/new/ColorDetector.sv">
+      <File Path="$PSRCDIR/sources_1/imports/new/Box_top.sv">
         <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../260305_VGA_OV7670/260305_VGA_OV7670.srcs/sources_1/new/ColorDetector.sv"/>
-          <Attr Name="ImportTime" Val="1772799433"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../260311_VGA_HSV_Integration/260311_VGA_HSV_Integration.srcs/sources_1/new/Box_top.sv"/>
+          <Attr Name="ImportTime" Val="1773361708"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/Filter_top.sv">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../260311_VGA_HSV_Integration/260311_VGA_HSV_Integration.srcs/sources_1/new/Filter_top.sv"/>
+          <Attr Name="ImportTime" Val="1773324989"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -96,6 +105,15 @@
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/../260305_VGA_OV7670/260305_VGA_OV7670.srcs/sources_1/new/FrameBuffer.sv"/>
           <Attr Name="ImportTime" Val="1772777077"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/HSV_Transfomer.sv">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../260311_VGA_HSV_Integration/260311_VGA_HSV_Integration.srcs/sources_1/new/HSV_Transfomer.sv"/>
+          <Attr Name="ImportTime" Val="1773284348"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -151,10 +169,28 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/imports/sources_1/new/VGA_EdgeDetector.sv">
+      <File Path="$PSRCDIR/sources_1/imports/new/box_edge_img.sv">
         <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../260305_VGA_OV7670/260305_VGA_OV7670.srcs/sources_1/new/VGA_EdgeDetector.sv"/>
-          <Attr Name="ImportTime" Val="1772799518"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../260311_VGA_HSV_Integration/260311_VGA_HSV_Integration.srcs/sources_1/new/box_edge_img.sv"/>
+          <Attr Name="ImportTime" Val="1773303598"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/box_maker.sv">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../260311_VGA_HSV_Integration/260311_VGA_HSV_Integration.srcs/sources_1/new/box_maker.sv"/>
+          <Attr Name="ImportTime" Val="1773311758"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/box_tracker.sv">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../260311_VGA_HSV_Integration/260311_VGA_HSV_Integration.srcs/sources_1/new/box_tracker.sv"/>
+          <Attr Name="ImportTime" Val="1773311640"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -167,8 +203,19 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/manual_control.sv">
+      <File Path="$PSRCDIR/sources_1/imports/new/image_output.sv">
         <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../260311_VGA_HSV_Integration/260311_VGA_HSV_Integration.srcs/sources_1/new/image_output.sv"/>
+          <Attr Name="ImportTime" Val="1773303614"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/kernel_color_filter.sv">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../260311_VGA_HSV_Integration/260311_VGA_HSV_Integration.srcs/sources_1/new/kernel_color_filter.sv"/>
+          <Attr Name="ImportTime" Val="1773226157"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -213,6 +260,50 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sources_1/imports/sources_1/new/ColorDetector.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../260305_VGA_OV7670/260305_VGA_OV7670.srcs/sources_1/new/ColorDetector.sv"/>
+          <Attr Name="ImportTime" Val="1772799433"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/sources_1/new/VGA_EdgeDetector.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../260305_VGA_OV7670/260305_VGA_OV7670.srcs/sources_1/new/VGA_EdgeDetector.sv"/>
+          <Attr Name="ImportTime" Val="1772799518"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/manual_control.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/crosshair_controller.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/crosshair_overlay.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sources_1/new/bbox_stabilizer.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
@@ -248,22 +339,6 @@
       <File Path="$PSRCDIR/sources_1/new/hostile_32.mem">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/new/crosshair_overlay.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/new/crosshair_controller.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>

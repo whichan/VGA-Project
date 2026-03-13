@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module VGA_Decoder_Top (
+module VGA_Decoder (
     input  logic       clk,
     input  logic       reset,
     output logic       pclk,
@@ -8,16 +8,23 @@ module VGA_Decoder_Top (
     output logic       v_sync,
     output logic [9:0] x_pixel,
     output logic [9:0] y_pixel,
-    output logic       DE
+    output logic       DE        //display enable
 );
 
-  //   logic pclk;
   logic [9:0] h_count;
   logic [9:0] v_count;
+  // logic w_pclk;
+  // assign pclk = w_pclk;
 
-  pclk_gen U_PCLK_GEN (.*);
-  pxl_counter U_PXL_COUNTER (.*);
-  vga_decoder U_VGA_DECODER (.*);
+  pclk_gen u_pclk_gen (
+      .*
+      // .pclk(w_pclk)
+  );
+  pxl_counter u_pxl_counter (
+      .*
+      // .pclk(w_pclk)
+  );
+  vga_decoder u_vga_decoder (.*);
 
 endmodule
 
@@ -26,36 +33,36 @@ module pclk_gen (
     input  logic reset,
     output logic pclk
 );
+  logic [1:0] p_count;
 
-  logic [1:0] p_counter;
-
-  always_ff @(posedge clk or posedge reset) begin : blockName
+  always_ff @(posedge clk or posedge reset) begin
     if (reset) begin
-      p_counter <= 0;
-      pclk      <= 0;
+      p_count <= 0;
+      pclk    <= 0;
     end else begin
-      if (p_counter == 2'd3) begin
-        p_counter <= 0;
-        pclk <= 1'b1;
+      if (p_count == 2'b11) begin
+        p_count <= 0;
+        pclk    <= 1'b1;
       end else begin
-        p_counter <= p_counter + 1;
-        pclk <= 1'b0;
+        p_count <= p_count + 1;
+        pclk    <= 1'b0;
       end
     end
   end
+
 endmodule
 
 module pxl_counter (
-    input  logic       clk,
-    input  logic       reset,
-    input  logic       pclk,
+    input logic clk,
+    input logic reset,
+    input logic pclk,
     output logic [9:0] h_count,
     output logic [9:0] v_count
 );
 
   localparam H_MAX = 800, V_MAX = 525;
 
-  always_ff @(posedge clk or posedge reset) begin : blockName
+  always_ff @(posedge clk, posedge reset) begin
     if (reset) begin
       h_count <= 0;
     end else begin
@@ -69,13 +76,12 @@ module pxl_counter (
     end
   end
 
-
-  always_ff @(posedge clk or posedge reset) begin
+  always_ff @(posedge clk, posedge reset) begin
     if (reset) begin
       v_count <= 0;
     end else begin
-      if (pclk) begin
-        if (h_count == H_MAX - 1) begin  // horizontal이 끝날 때마다 vertical 카운터 증가
+      if (pclk) begin  //match the sync
+        if (h_count == H_MAX - 1) begin
           if (v_count == V_MAX - 1) begin
             v_count <= 0;
           end else begin
@@ -85,17 +91,18 @@ module pxl_counter (
       end
     end
   end
+
 endmodule
 
-
+//comparator, there is no clk
 module vga_decoder (
     input  logic [9:0] h_count,
     input  logic [9:0] v_count,
     output logic       h_sync,
     output logic       v_sync,
+    output logic       DE,       //display enable
     output logic [9:0] x_pixel,
-    output logic [9:0] y_pixel,
-    output logic       DE
+    output logic [9:0] y_pixel
 );
 
   localparam H_Visible_area = 640;
@@ -107,16 +114,17 @@ module vga_decoder (
   localparam V_Visible_area = 480;
   localparam V_Front_porch = 10;
   localparam V_Sync_pulse = 2;
-  localparam V_Back_porch = 33;
-  localparam V_Whole_frame = 525;
+  localparam V_Back_porch = 22;
+  localparam V_Whole_line = 525;
 
-  assign h_sync = !((h_count >= (H_Visible_area + H_Front_porch)) && 
-                    (h_count < (H_Visible_area + H_Front_porch + H_Sync_pulse)));
+  assign h_sync = !((h_count >= (H_Visible_area + H_Front_porch)) &&
+                    (h_count< (H_Visible_area + H_Front_porch+H_Sync_pulse)));
 
-  assign v_sync = !((v_count >= (V_Visible_area + V_Front_porch)) && 
-                    (v_count < (V_Visible_area + V_Front_porch + V_Sync_pulse)));
+  assign v_sync = !((v_count >= (V_Visible_area + V_Front_porch)) &&
+                    (v_count< (V_Visible_area + V_Front_porch+V_Sync_pulse)));
 
+  assign DE = (h_count < H_Visible_area) && (v_count < V_Visible_area);
   assign x_pixel = h_count;
   assign y_pixel = v_count;
-  assign DE = (h_count < H_Visible_area) && (v_count < V_Visible_area);
+
 endmodule
